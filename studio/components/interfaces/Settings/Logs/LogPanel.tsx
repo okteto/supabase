@@ -11,6 +11,7 @@ import {
   IconSearch,
   IconClock,
   Popover,
+  IconPlay,
 } from '@supabase/ui'
 import { LogSearchCallback, LogTemplate } from '.'
 import dayjs from 'dayjs'
@@ -28,6 +29,8 @@ interface Props {
   onSelectTemplate: (template: LogTemplate) => void
   isShowingEventChart: boolean
   onToggleEventChart: () => void
+
+  editorControls: React.ReactNode
 }
 
 dayjs.extend(utc)
@@ -48,6 +51,8 @@ const LogPanel: FC<Props> = ({
   onSelectTemplate,
   isShowingEventChart,
   onToggleEventChart,
+
+  editorControls,
 }) => {
   const [search, setSearch] = useState('')
   const [to, setTo] = useState({ value: '', error: '' })
@@ -85,8 +90,15 @@ const LogPanel: FC<Props> = ({
 
   const showFromReset = to.value !== ''
   return (
-    <div className="bg-panel-header-light dark:bg-panel-header-dark">
-      <div className="px-2 py-1 flex items-center justify-between w-full">
+    <div
+      className="
+    border
+    border-panel-border-light dark:border-panel-border-dark rounded rounded-bl-none rounded-br-none
+    bg-panel-header-light dark:bg-panel-header-dark
+    
+    "
+    >
+      <div className="px-5 py-2 flex items-center justify-between w-full">
         <div className="flex flex-row gap-x-4 items-center">
           {!isCustomQuery && (
             <Button
@@ -127,107 +139,12 @@ const LogPanel: FC<Props> = ({
               </Dropdown.Item>
             ))}
           >
-            <Button as="span" type="text" iconRight={<IconChevronDown />}>
+            <Button as="span" type="default" iconRight={<IconChevronDown />}>
               Templates
             </Button>
           </Dropdown>
-
-          {!isCustomQuery && (
-            <Button as="span" type="outline" onClick={onCustomClick}>
-              Explore via query
-            </Button>
-          )}
         </div>
-        <div className="flex items-center   gap-x-4">
-          {!isCustomQuery && (
-            <>
-              <div className="flex flex-row">
-                <Popover
-                  side="bottom"
-                  align="end"
-                  portalled
-                  overlay={
-                    <Input
-                      label="To"
-                      labelOptional="UTC"
-                      value={to.value === '' ? defaultTimestamp : to.value}
-                      onChange={handleFromChange}
-                      error={to.error}
-                      className="w-72 p-3"
-                      actions={[
-                        <Button
-                          key="set"
-                          size="tiny"
-                          title="Set"
-                          type="secondary"
-                          onClick={handleSearch}
-                        >
-                          Set
-                        </Button>,
-                      ]}
-                    />
-                  }
-                >
-                  <Button
-                    as="span"
-                    size="tiny"
-                    className={showFromReset ? '!rounded-r-none' : ''}
-                    type={showFromReset ? 'outline' : 'text'}
-                    icon={<IconClock size="tiny" />}
-                  >
-                    {to.value ? 'Custom' : 'Now'}
-                  </Button>
-                </Popover>
-                {showFromReset && (
-                  <Button
-                    size="tiny"
-                    className={showFromReset ? '!rounded-l-none' : ''}
-                    icon={<IconX size="tiny" />}
-                    type="outline"
-                    title="Clear timestamp filter"
-                    onClick={handleFromReset}
-                  />
-                )}
-              </div>
-              {!isCustomQuery && (
-                <div className="flex items-center space-x-2">
-                  <p className="text-xs">Show event chart</p>
-                  <Toggle size="tiny" checked={isShowingEventChart} onChange={onToggleEventChart} />
-                </div>
-              )}
-              {/* wrap with form so that if user presses enter, the search value will submit automatically */}
-              <form
-                id="log-panel-search"
-                onSubmit={(e) => {
-                  // prevent redirection
-                  e.preventDefault()
-                  handleSearch()
-                }}
-              >
-                <Input
-                  placeholder="Search events"
-                  onChange={(e) => setSearch(e.target.value)}
-                  value={search}
-                  actions={[
-                    search && (
-                      <IconX
-                        key="clear-search"
-                        size="tiny"
-                        className="cursor-pointer mx-1"
-                        title="Clear search"
-                        onClick={() => setSearch('')}
-                      />
-                    ),
-
-                    <Button key="go" size="tiny" title="Go" type="default" onClick={handleSearch}>
-                      <IconSearch size={16} />
-                    </Button>,
-                  ]}
-                />
-              </form>
-            </>
-          )}
-        </div>
+        {editorControls}
       </div>
     </div>
   )
