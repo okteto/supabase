@@ -1,8 +1,8 @@
 interface Metadata {
   [key: string]: string | number | Object | Object[]
 }
-export type LogSearchCallback = (filters: { query: string; to?: string; toMicro?: number }) => void
 
+export type LogSearchCallback = (filters: { query: string; to?: string; toMicro?: number }) => void
 export interface LogsEndpointParams {
   // project ref
   project: string
@@ -44,3 +44,9 @@ type LFResponse<T> = {
 export type Count = LFResponse<CountData>
 
 export type Logs = LFResponse<LogData>
+
+export type QueryType = 'api' | 'database' | 'functions' | 'fn_edge' | 'sql'
+
+export type Mode = 'simple' | 'custom'
+
+export type Table = 'edge_logs' | 'postgres_logs'
