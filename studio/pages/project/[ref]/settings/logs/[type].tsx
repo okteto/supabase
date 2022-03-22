@@ -64,8 +64,6 @@ export const LogPage: NextPage = () => {
 
   const table = type === 'api' ? LogsTableName.EDGE : LogsTableName.POSTGRES
 
-  // const [whereClauses, setWhereClauses] = useState('')
-
   const [
     { error, logData, params, newCount, filters, isLoading },
     { loadOlder, setFilters, refresh, setTo },
@@ -78,11 +76,6 @@ export const LogPage: NextPage = () => {
     }
     ${filterSqlWhereBuilder(whereFilters, table, filterObj.search_query).join('\n')}`,
   })
-
-  useEffect(() => {
-    console.log('refresh happening')
-    refresh()
-  }, [whereFilters])
 
   const title = `Logs - ${LOG_TYPE_LABEL_MAPPING[type as keyof typeof LOG_TYPE_LABEL_MAPPING]}`
 
@@ -99,6 +92,11 @@ export const LogPage: NextPage = () => {
     setFilters((prev) => ({ ...prev, search_query: template.searchString }))
   }
 
+  useEffect(() => {
+    // runs when any of the filters change
+    handleRefresh()
+  }, [whereFilters])
+
   const handleRefresh = () => {
     refresh()
     router.push({
@@ -106,6 +104,7 @@ export const LogPage: NextPage = () => {
       query: {
         ...router.query,
         te: undefined,
+        ...whereFilters,
       },
     })
   }
@@ -121,21 +120,10 @@ export const LogPage: NextPage = () => {
         q: undefined,
         s: query || '',
         te: unixMicro,
-      },
-    })
-  }
-
-  useEffect(() => {
-    // console.log('useEffectFilters', whereFilters)
-
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
         ...whereFilters,
       },
     })
-  }, [whereFilters])
+  }
 
   return (
     <SettingsLayout title={title}>
