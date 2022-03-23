@@ -1,0 +1,5 @@
+icon: https://apps.okteto.com/movies/icon.png
+deploy:
+  - okteto pipeline deploy -r https://github.com/okteto/movies --name movies
+  - okteto pipeline deploy -r https://github.com/okteto/microservices --name microservices
+  - okteto stack deploy -f ./docker/docker-compose.yml -f ./docker/dev/docker-compose.dev.yml
